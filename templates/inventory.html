@@ -55,6 +55,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Type</th>
                         <th>Nom du produit</th>
                         <th>Description</th>
                         <th>
@@ -74,7 +75,30 @@
                     {% for product in products %}
                     <tr class="table-row-animate" style="animation-delay: {{ loop.index0 * 0.1 }}s">
                         <td><span class="badge badge-light">#{{ product.id }}</span></td>
-                        <td class="product-name">{{ product.name }}</td>
+                        <td>
+                            {% if product.item_type == 'outil' %}
+                                <span class="type-badge badge-outil"><i class="fas fa-wrench"></i> Outil</span>
+                            {% else %}
+                                <span class="type-badge badge-conso"><i class="fas fa-flask"></i> Consommable</span>
+                            {% endif %}
+                        </td>
+                        <td class="product-name">
+                            <div class="name-container">
+                                <span>{{ product.name }}</span>
+                                {% if product.item_type == 'consommable' and product.picto_list %}
+                                <div class="picto-display-group">
+                                    {% for pic in product.picto_list %}
+                                        {% if pic == 'inflammable' %}<i class="fas fa-fire picto-icon" title="Inflammable"></i>{% endif %}
+                                        {% if pic == 'toxique' %}<i class="fas fa-skull-crossbones picto-icon" title="Toxique"></i>{% endif %}
+                                        {% if pic == 'corrosif' %}<i class="fas fa-flask picto-icon" title="Corrosif"></i>{% endif %}
+                                        {% if pic == 'nocif' %}<i class="fas fa-exclamation-triangle picto-icon" title="Nocif/Irritant"></i>{% endif %}
+                                        {% if pic == 'explosif' %}<i class="fas fa-bomb picto-icon" title="Explosif"></i>{% endif %}
+                                        {% if pic == 'environnement' %}<i class="fas fa-tree picto-icon" title="Danger Environnement"></i>{% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </td>
                         <td class="product-desc">{{ product.description }}</td>
                         <td>
                             <span class="quantity-badge {% if product.display_qty == 0 %}danger{% elif product.display_qty < 5 %}warning{% else %}success{% endif %}">

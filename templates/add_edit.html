@@ -30,6 +30,48 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="item_type">Type de produit <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-cubes"></i>
+                        <select id="item_type" name="item_type" required class="form-select">
+                            <option value="outil" {% if product and product.item_type == 'outil' %}selected{% endif %}>Outil</option>
+                            <option value="consommable" {% if product and product.item_type == 'consommable' %}selected{% endif %}>Consommable</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" id="pictograms_section" style="display: {% if product and product.item_type == 'consommable' %}block{% else %}none{% endif %};">
+                    <label>Pictogrammes de sécurité</label>
+                    <div class="pictograms-grid">
+                        {% set p_list = product.picto_list if product else [] %}
+                        <label class="picto-checkbox">
+                            <input type="checkbox" name="pictograms" value="inflammable" {% if 'inflammable' in p_list %}checked{% endif %}>
+                            <div class="picto-tile"><i class="fas fa-fire"></i><span>Inflammable</span></div>
+                        </label>
+                        <label class="picto-checkbox">
+                            <input type="checkbox" name="pictograms" value="toxique" {% if 'toxique' in p_list %}checked{% endif %}>
+                            <div class="picto-tile"><i class="fas fa-skull-crossbones"></i><span>Toxique</span></div>
+                        </label>
+                        <label class="picto-checkbox">
+                            <input type="checkbox" name="pictograms" value="corrosif" {% if 'corrosif' in p_list %}checked{% endif %}>
+                            <div class="picto-tile"><i class="fas fa-flask"></i><span>Corrosif</span></div>
+                        </label>
+                        <label class="picto-checkbox">
+                            <input type="checkbox" name="pictograms" value="nocif" {% if 'nocif' in p_list %}checked{% endif %}>
+                            <div class="picto-tile"><i class="fas fa-exclamation-triangle"></i><span>Nocif</span></div>
+                        </label>
+                        <label class="picto-checkbox">
+                            <input type="checkbox" name="pictograms" value="explosif" {% if 'explosif' in p_list %}checked{% endif %}>
+                            <div class="picto-tile"><i class="fas fa-bomb"></i><span>Explosif</span></div>
+                        </label>
+                        <label class="picto-checkbox">
+                            <input type="checkbox" name="pictograms" value="environnement" {% if 'environnement' in p_list %}checked{% endif %}>
+                            <div class="picto-tile"><i class="fas fa-tree"></i><span>Environnement</span></div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="form-group room-quantities-group">
                     <label>Stock par salle <span class="required">*</span></label>
                     <div class="quantities-grid">
@@ -70,4 +112,20 @@
 <!-- Background Elements -->
 <div class="blob blob-1 dashboard-blob"></div>
 <div class="blob blob-3 dashboard-blob"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelector = document.getElementById('item_type');
+    const pictogramsSection = document.getElementById('pictograms_section');
+
+    typeSelector.addEventListener('change', function() {
+        if (this.value === 'consommable') {
+            pictogramsSection.style.display = 'block';
+            pictogramsSection.style.animation = 'fadeIn 0.3s forwards';
+        } else {
+            pictogramsSection.style.display = 'none';
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -66,9 +66,8 @@ def inventory():
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            # Récupération de tous les produits en calculant le total
             cursor.execute("""
-                SELECT id, name, description, 
+                SELECT id, name, description, item_type, pictograms,
                        qty_lab1, qty_lab2, qty_reserve,
                        (qty_lab1 + qty_lab2 + qty_reserve) as total_qty
                 FROM products 
@@ -76,8 +75,11 @@ def inventory():
             """)
             products = cursor.fetchall()
             
-            # Formater les données pour le template en fonction de la salle choisie
+            # Formater les données
             for p in products:
+                # Convertir la chaine pictograms en liste pour Jinja
+                p['picto_list'] = [pic.strip() for pic in p['pictograms'].split(',')] if p['pictograms'] else []
+                
                 if current_room == 'lab1':
                     p['display_qty'] = p['qty_lab1']
                 elif current_room == 'lab2':
@@ -99,6 +101,15 @@ def add_product():
         
     if request.method == 'POST':
         name = request.form['name']
+        item_type = request.form['item_type']
+        
+        # Si c'est un outil, on vide les pictogrammes
+        if item_type == 'outil':
+            pictograms = ''
+        else:
+            picto_list = request.form.getlist('pictograms')
+            pictograms = ','.join(picto_list)
+            
         qty_lab1 = request.form['qty_lab1']
         qty_lab2 = request.form['qty_lab2']
         qty_reserve = request.form['qty_reserve']
@@ -108,8 +119,8 @@ def add_product():
         try:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO products (name, qty_lab1, qty_lab2, qty_reserve, description) VALUES (%s, %s, %s, %s, %s)",
-                    (name, qty_lab1, qty_lab2, qty_reserve, description)
+                    "INSERT INTO products (name, item_type, pictograms, qty_lab1, qty_lab2, qty_reserve, description) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    (name, item_type, pictograms, qty_lab1, qty_lab2, qty_reserve, description)
                 )
             conn.commit()
             flash('Produit ajouté avec succès.', 'success')
@@ -128,6 +139,14 @@ def edit_product(id):
     try:
         if request.method == 'POST':
             name = request.form['name']
+            item_type = request.form['item_type']
+            
+            if item_type == 'outil':
+                pictograms = ''
+            else:
+                picto_list = request.form.getlist('pictograms')
+                pictograms = ','.join(picto_list)
+                
             qty_lab1 = request.form['qty_lab1']
             qty_lab2 = request.form['qty_lab2']
             qty_reserve = request.form['qty_reserve']
@@ -135,8 +154,8 @@ def edit_product(id):
             
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "UPDATE products SET name=%s, qty_lab1=%s, qty_lab2=%s, qty_reserve=%s, description=%s WHERE id=%s",
-                    (name, qty_lab1, qty_lab2, qty_reserve, description, id)
+                    "UPDATE products SET name=%s, item_type=%s, pictograms=%s, qty_lab1=%s, qty_lab2=%s, qty_reserve=%s, description=%s WHERE id=%s",
+                    (name, item_type, pictograms, qty_lab1, qty_lab2, qty_reserve, description, id)
                 )
             conn.commit()
             flash('Produit modifié avec succès.', 'success')
@@ -148,6 +167,7 @@ def edit_product(id):
                 if not product:
                     flash('Produit introuvable.', 'error')
                     return redirect(url_for('inventory'))
+                product['picto_list'] = [pic.strip() for pic in product['pictograms'].split(',')] if product['pictograms'] else []
             return render_template('add_edit.html', action='Modifier', product=product)
     finally:
         conn.close()

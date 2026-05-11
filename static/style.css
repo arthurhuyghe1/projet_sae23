@@ -791,3 +791,141 @@ a {
 .text-muted {
     color: var(--text-muted);
 }
+
+/* ==========================================================================
+   Select Inputs
+   ========================================================================== */
+.form-select {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem 1rem 1rem 3rem;
+    color: var(--text-main);
+    font-size: 1rem;
+    appearance: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.form-select option {
+    background: var(--bg-dark);
+    color: var(--text-main);
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   Pictogram Checkbox Tiles
+   ========================================================================== */
+.pictograms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.picto-checkbox {
+    cursor: pointer;
+    user-select: none;
+}
+
+.picto-checkbox input {
+    display: none;
+}
+
+.picto-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: var(--transition-fast);
+}
+
+.picto-tile i {
+    font-size: 2rem;
+    color: var(--text-muted);
+    transition: var(--transition-fast);
+}
+
+.picto-tile span {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: var(--transition-fast);
+}
+
+.picto-checkbox:hover .picto-tile {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.picto-checkbox input:checked + .picto-tile {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--danger);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+}
+
+.picto-checkbox input:checked + .picto-tile i {
+    color: var(--danger);
+    transform: scale(1.1);
+}
+
+.picto-checkbox input:checked + .picto-tile span {
+    color: #fff;
+}
+
+/* ==========================================================================
+   Inventory Table additions
+   ========================================================================== */
+.type-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.badge-outil {
+    background: rgba(148, 163, 184, 0.1);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.badge-conso {
+    background: rgba(139, 92, 246, 0.1);
+    color: #c4b5fd;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.name-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.picto-display-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.picto-icon {
+    color: var(--danger);
+    font-size: 1.1rem;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 0.4rem;
+    border-radius: 6px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
