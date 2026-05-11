@@ -22,6 +22,7 @@ def get_db_connection():
                 user=DB_USER,
                 password=DB_PASSWORD,
                 database=DB_NAME,
+                charset='utf8mb4',
                 cursorclass=pymysql.cursors.DictCursor
             )
             return connection
