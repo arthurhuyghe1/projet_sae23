@@ -26,15 +26,25 @@
                     <label for="name">Nom du produit <span class="required">*</span></label>
                     <div class="input-with-icon">
                         <i class="fas fa-tag"></i>
-                        <input type="text" id="name" name="name" value="{{ product.name if product else '' }}" required placeholder="Ex: Microscope Optique">
+                        <input type="text" id="name" name="name" value="{{ product.name if product else '' }}" required placeholder="Ex: Acide Chlorhydrique">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="quantity">Quantité en stock <span class="required">*</span></label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-boxes"></i>
-                        <input type="number" id="quantity" name="quantity" value="{{ product.quantity if product else '0' }}" min="0" required>
+                <div class="form-group room-quantities-group">
+                    <label>Stock par salle <span class="required">*</span></label>
+                    <div class="quantities-grid">
+                        <div class="qty-input">
+                            <label for="qty_lab1"><i class="fas fa-microscope text-muted"></i> Labo 1</label>
+                            <input type="number" id="qty_lab1" name="qty_lab1" value="{{ product.qty_lab1 if product else '0' }}" min="0" required>
+                        </div>
+                        <div class="qty-input">
+                            <label for="qty_lab2"><i class="fas fa-vials text-muted"></i> Labo 2</label>
+                            <input type="number" id="qty_lab2" name="qty_lab2" value="{{ product.qty_lab2 if product else '0' }}" min="0" required>
+                        </div>
+                        <div class="qty-input">
+                            <label for="qty_reserve"><i class="fas fa-boxes text-muted"></i> Réserve</label>
+                            <input type="number" id="qty_reserve" name="qty_reserve" value="{{ product.qty_reserve if product else '0' }}" min="0" required>
+                        </div>
                     </div>
                 </div>
 
@@ -46,7 +56,7 @@
                     </div>
                 </div>
 
-                <div class="form-actions">
+                <div class="form-actions" style="margin-top: 1rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
                     <a href="{{ url_for('inventory') }}" class="btn btn-secondary">Annuler</a>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> {{ action }} le produit

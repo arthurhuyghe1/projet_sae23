@@ -6,14 +6,13 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete_tres_complexe'
 
-# Configuration de la base de données via variables d'environnement (définies dans docker-compose)
+# Configuration de la base de données via variables d'environnement
 DB_HOST = os.environ.get('DB_HOST', 'localhost')
 DB_USER = os.environ.get('DB_USER', 'user')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', 'password')
 DB_NAME = os.environ.get('DB_NAME', 'iut_lab')
 
 def get_db_connection():
-    # Retry mechanism pour s'assurer que la db a démarré
     max_retries = 5
     for i in range(max_retries):
         try:
@@ -59,15 +58,39 @@ def inventory():
     if 'role' not in session:
         return redirect(url_for('login'))
         
+    current_room = request.args.get('room', 'all')
+    valid_rooms = ['all', 'lab1', 'lab2', 'reserve']
+    if current_room not in valid_rooms:
+        current_room = 'all'
+        
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM products ORDER BY id DESC")
+            # Récupération de tous les produits en calculant le total
+            cursor.execute("""
+                SELECT id, name, description, 
+                       qty_lab1, qty_lab2, qty_reserve,
+                       (qty_lab1 + qty_lab2 + qty_reserve) as total_qty
+                FROM products 
+                ORDER BY id DESC
+            """)
             products = cursor.fetchall()
+            
+            # Formater les données pour le template en fonction de la salle choisie
+            for p in products:
+                if current_room == 'lab1':
+                    p['display_qty'] = p['qty_lab1']
+                elif current_room == 'lab2':
+                    p['display_qty'] = p['qty_lab2']
+                elif current_room == 'reserve':
+                    p['display_qty'] = p['qty_reserve']
+                else:
+                    p['display_qty'] = p['total_qty']
+                    
     finally:
         conn.close()
         
-    return render_template('inventory.html', products=products, role=session['role'])
+    return render_template('inventory.html', products=products, role=session['role'], current_room=current_room)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_product():
@@ -76,15 +99,17 @@ def add_product():
         
     if request.method == 'POST':
         name = request.form['name']
-        quantity = request.form['quantity']
+        qty_lab1 = request.form['qty_lab1']
+        qty_lab2 = request.form['qty_lab2']
+        qty_reserve = request.form['qty_reserve']
         description = request.form['description']
         
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO products (name, quantity, description) VALUES (%s, %s, %s)",
-                    (name, quantity, description)
+                    "INSERT INTO products (name, qty_lab1, qty_lab2, qty_reserve, description) VALUES (%s, %s, %s, %s, %s)",
+                    (name, qty_lab1, qty_lab2, qty_reserve, description)
                 )
             conn.commit()
             flash('Produit ajouté avec succès.', 'success')
@@ -103,13 +128,15 @@ def edit_product(id):
     try:
         if request.method == 'POST':
             name = request.form['name']
-            quantity = request.form['quantity']
+            qty_lab1 = request.form['qty_lab1']
+            qty_lab2 = request.form['qty_lab2']
+            qty_reserve = request.form['qty_reserve']
             description = request.form['description']
             
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "UPDATE products SET name=%s, quantity=%s, description=%s WHERE id=%s",
-                    (name, quantity, description, id)
+                    "UPDATE products SET name=%s, qty_lab1=%s, qty_lab2=%s, qty_reserve=%s, description=%s WHERE id=%s",
+                    (name, qty_lab1, qty_lab2, qty_reserve, description, id)
                 )
             conn.commit()
             flash('Produit modifié avec succès.', 'success')

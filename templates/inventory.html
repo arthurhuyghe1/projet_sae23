@@ -33,6 +33,22 @@
             {% endif %}
         </div>
 
+        <!-- Room Navigation Tabs -->
+        <div class="room-tabs">
+            <a href="{{ url_for('inventory', room='all') }}" class="tab-btn {% if current_room == 'all' %}active{% endif %}">
+                <i class="fas fa-globe"></i> Vue Globale
+            </a>
+            <a href="{{ url_for('inventory', room='lab1') }}" class="tab-btn {% if current_room == 'lab1' %}active{% endif %}">
+                <i class="fas fa-microscope"></i> Labo 1
+            </a>
+            <a href="{{ url_for('inventory', room='lab2') }}" class="tab-btn {% if current_room == 'lab2' %}active{% endif %}">
+                <i class="fas fa-vials"></i> Labo 2
+            </a>
+            <a href="{{ url_for('inventory', room='reserve') }}" class="tab-btn {% if current_room == 'reserve' %}active{% endif %}">
+                <i class="fas fa-boxes"></i> Réserve
+            </a>
+        </div>
+
         <div class="glass-panel table-container">
             {% if products %}
             <table class="inventory-table">
@@ -41,7 +57,14 @@
                         <th>ID</th>
                         <th>Nom du produit</th>
                         <th>Description</th>
-                        <th>Quantité</th>
+                        <th>
+                            Quantité 
+                            {% if current_room == 'all' %}(Totale)
+                            {% elif current_room == 'lab1' %}(Labo 1)
+                            {% elif current_room == 'lab2' %}(Labo 2)
+                            {% elif current_room == 'reserve' %}(Réserve)
+                            {% endif %}
+                        </th>
                         {% if role == 'admin' %}
                         <th class="actions-col">Actions</th>
                         {% endif %}
@@ -54,8 +77,8 @@
                         <td class="product-name">{{ product.name }}</td>
                         <td class="product-desc">{{ product.description }}</td>
                         <td>
-                            <span class="quantity-badge {% if product.quantity == 0 %}danger{% elif product.quantity < 5 %}warning{% else %}success{% endif %}">
-                                {{ product.quantity }}
+                            <span class="quantity-badge {% if product.display_qty == 0 %}danger{% elif product.display_qty < 5 %}warning{% else %}success{% endif %}">
+                                {{ product.display_qty }}
                             </span>
                         </td>
                         {% if role == 'admin' %}
@@ -78,7 +101,7 @@
             <div class="empty-state">
                 <i class="fas fa-box-open empty-icon"></i>
                 <h3>Aucun produit trouvé</h3>
-                <p>L'inventaire est actuellement vide.</p>
+                <p>L'inventaire est actuellement vide pour cette sélection.</p>
                 {% if role == 'admin' %}
                 <a href="{{ url_for('add_product') }}" class="btn btn-primary mt-3">Ajouter le premier produit</a>
                 {% endif %}
