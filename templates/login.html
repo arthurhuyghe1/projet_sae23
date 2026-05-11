@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="login-page">
+    <div class="glass-card login-card">
+        <div class="login-header">
+            <div class="logo-icon">
+                <i class="fas fa-flask"></i>
+            </div>
+            <h1>IUT Lab Manager</h1>
+            <p>Portail d'accès au gestionnaire des réserves</p>
+        </div>
+
+        <div class="role-selector">
+            <button class="role-btn" data-role="student" id="btn-student">
+                <i class="fas fa-user-graduate"></i>
+                <span>Espace Étudiant</span>
+                <small>Consultation libre</small>
+            </button>
+            <button class="role-btn" data-role="admin" id="btn-admin">
+                <i class="fas fa-user-shield"></i>
+                <span>Espace Administrateur</span>
+                <small>Gestion des stocks</small>
+            </button>
+        </div>
+
+        <!-- Formulaires cachés -->
+        <form method="POST" action="/" id="form-student" style="display: none;">
+            <input type="hidden" name="role" value="student">
+        </form>
+
+        <div class="admin-login-modal" id="admin-modal" style="display: none;">
+            <form method="POST" action="/" id="form-admin" class="admin-form">
+                <input type="hidden" name="role" value="admin">
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" id="password" placeholder="Mot de passe administrateur" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-admin">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Connexion</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Animated Background Elements -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+{% endblock %}

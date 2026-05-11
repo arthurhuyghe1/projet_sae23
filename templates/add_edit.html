@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard">
+    <header class="glass-nav">
+        <div class="nav-brand">
+            <i class="fas fa-flask"></i>
+            <h2>IUT Lab Manager</h2>
+        </div>
+        <div class="nav-actions">
+            <a href="{{ url_for('inventory') }}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Retour à l'inventaire
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content flex-center">
+        <div class="glass-card form-card">
+            <div class="form-header">
+                <h2>{{ action }} un produit</h2>
+                <p>Remplissez les détails du produit ci-dessous.</p>
+            </div>
+
+            <form method="POST" class="product-form">
+                <div class="form-group">
+                    <label for="name">Nom du produit <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-tag"></i>
+                        <input type="text" id="name" name="name" value="{{ product.name if product else '' }}" required placeholder="Ex: Microscope Optique">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantité en stock <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-boxes"></i>
+                        <input type="number" id="quantity" name="quantity" value="{{ product.quantity if product else '0' }}" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <div class="input-with-icon textarea-icon">
+                        <i class="fas fa-align-left"></i>
+                        <textarea id="description" name="description" rows="4" placeholder="Détails supplémentaires...">{{ product.description if product else '' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{{ url_for('inventory') }}" class="btn btn-secondary">Annuler</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> {{ action }} le produit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<!-- Background Elements -->
+<div class="blob blob-1 dashboard-blob"></div>
+<div class="blob blob-3 dashboard-blob"></div>
+{% endblock %}

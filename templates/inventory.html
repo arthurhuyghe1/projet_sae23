@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard">
+    <header class="glass-nav">
+        <div class="nav-brand">
+            <i class="fas fa-flask"></i>
+            <h2>IUT Lab Manager</h2>
+        </div>
+        <div class="nav-actions">
+            <div class="user-badge {{ role }}">
+                <i class="fas {% if role == 'admin' %}fa-user-shield{% else %}fa-user-graduate{% endif %}"></i>
+                <span>{% if role == 'admin' %}Administrateur{% else %}Étudiant{% endif %}</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-header">
+            <div>
+                <h1 class="page-title">Inventaire des Produits</h1>
+                <p class="page-subtitle">Consultez l'état des stocks des laboratoires.</p>
+            </div>
+            {% if role == 'admin' %}
+            <div class="action-buttons">
+                <a href="{{ url_for('add_product') }}" class="btn btn-primary pulse-btn">
+                    <i class="fas fa-plus"></i> Ajouter un produit
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="glass-panel table-container">
+            {% if products %}
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom du produit</th>
+                        <th>Description</th>
+                        <th>Quantité</th>
+                        {% if role == 'admin' %}
+                        <th class="actions-col">Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr class="table-row-animate" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                        <td><span class="badge badge-light">#{{ product.id }}</span></td>
+                        <td class="product-name">{{ product.name }}</td>
+                        <td class="product-desc">{{ product.description }}</td>
+                        <td>
+                            <span class="quantity-badge {% if product.quantity == 0 %}danger{% elif product.quantity < 5 %}warning{% else %}success{% endif %}">
+                                {{ product.quantity }}
+                            </span>
+                        </td>
+                        {% if role == 'admin' %}
+                        <td class="actions-cell">
+                            <a href="{{ url_for('edit_product', id=product.id) }}" class="action-btn edit-btn" title="Modifier">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <form action="{{ url_for('delete_product', id=product.id) }}" method="POST" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                                <button type="submit" class="action-btn delete-btn" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-box-open empty-icon"></i>
+                <h3>Aucun produit trouvé</h3>
+                <p>L'inventaire est actuellement vide.</p>
+                {% if role == 'admin' %}
+                <a href="{{ url_for('add_product') }}" class="btn btn-primary mt-3">Ajouter le premier produit</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+
+<!-- Background Elements -->
+<div class="blob blob-1 dashboard-blob"></div>
+<div class="blob blob-2 dashboard-blob"></div>
+{% endblock %}
